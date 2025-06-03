@@ -39,6 +39,7 @@ public:
   {
     this->velocidad = num;
   };
+
   void detenerse()
   {
     analogWrite(this->MD[0], 0);
@@ -99,6 +100,7 @@ class Camara {
     }
 
     void close() {
+      this->Sizes.clear();
       this->Sizes.releaseMemory();
     }
 
@@ -138,7 +140,7 @@ class Camara {
 
   private:
     float Prom_Sizes() {
-      float promSize;
+      float promSize = 0;
       SimpleVector<int>::SimpleVectorIterator Size = this->Sizes.begin(); 
       while (Size.hasNext())
       {
@@ -150,14 +152,15 @@ class Camara {
 
     int switchDist(int size) {
       float promSize = Prom_Sizes();
-      if (size > 1 && size < promSize/2)
-      {
-        Serial.print("Cercano");
+      if (size > 1 && size < promSize/2) {
+        Serial.print("Lejano\t");
       } else if(size > promSize / 2 && size < promSize) {
-        Serial.print("Mediano");
-      } else if(size > promSize && size < promSize * 2) {
-        Serial.print("Lejano");
+        Serial.print("Mediano\t");
+      } else if(size >= promSize) {
+        Serial.print("Cercano\t");
       }
+      Serial.print("Promedio de Distancia: ");
+      Serial.println(promSize);
       return 2;
     }
     
@@ -176,11 +179,12 @@ void loop() {
   Pixy.getBloques();
   Pixy.infoBloques();
 
-  Robot.avanzar();
-  Robot.retroceder();
-  Robot.girarDerecha();
-  Robot.girarIzquierda();
+  Robot.avanzar(10);
+  Robot.retroceder(10);
+  Robot.girarDerecha(10);
+  Robot.girarIzquierda(10);
   
+  delay(1000);
 
   Pixy.close();
 }
