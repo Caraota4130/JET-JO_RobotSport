@@ -3,86 +3,82 @@
 #include <Pixy2/Pixy2.h>
 
 
-const int GIRO = 1000;
-int timing = 0;
+const int giro = 180;
+int timing=1000;
+class Movimiento {
+	private:
+  	int MD[2], MI[2], EN[2];
+    int velocidad;
+  public:
+    Movimiento(int MIa, int MIb, int ENI, int MDa, int MDb, int END, int velocidad=250) {
+      this->MD[0]=MIa;
+      this->MD[1]=MIb;
+      this->EN[0]=ENI;
+      this->MI[0]=MDa;
+      this->MI[1]=MDb;
+      this->EN[1]=END;
+      this->velocidad=velocidad;
+    };
+    void iniciar() {
+      //Configuracion de pines
+      pinMode(this->MD[0], OUTPUT);
+	    pinMode(this->MD[1], OUTPUT);
+      pinMode(this->MI[0], OUTPUT);
+	    pinMode(this->MI[1], OUTPUT);
 
-class Movimiento
-{
-private:
-  int MD[2], MI[2];
-  int velocidad;
-
-public:
-  Movimiento(int MDa, int MDb, int MIa, int MIb, int velocidad = 255)
-  {
-    this->MD[0] = MDa;
-    this->MD[1] = MDb;
-    this->MI[0] = MIa;
-    this->MI[1] = MIb;
-    this->velocidad = velocidad;
-  };
-  void iniciar()
-  {
-    // Configuracion de pines
-    pinMode(this->MD[0], OUTPUT);
-    pinMode(this->MD[1], OUTPUT);
-    pinMode(this->MI[0], OUTPUT);
-    pinMode(this->MI[1], OUTPUT);
-
-    // Apagar motores
-    analogWrite(this->MD[0], 0);
-    analogWrite(this->MD[1], 0);
-    analogWrite(this->MI[0], 0);
-    analogWrite(this->MI[1], 0);
-  };
-  void setVelocidad(int num)
-  {
-    this->velocidad = num;
-  };
-
-  void detenerse()
-  {
-    analogWrite(this->MD[0], 0);
-    analogWrite(this->MD[1], 0);
-    analogWrite(this->MI[0], 0);
-    analogWrite(this->MI[1], 0);
-  };
-  void avanzar(int tiempo = 1000)
-  {
-    analogWrite(this->MD[0], this->velocidad);
-    analogWrite(this->MD[1], 0);
-    analogWrite(this->MI[0], this->velocidad);
-    analogWrite(this->MI[1], 0);
-    delay(tiempo);
-    this->detenerse();
-  };
-  void retroceder(int tiempo = 1000)
-  {
-    analogWrite(this->MD[0], 0);
-    analogWrite(this->MD[1], this->velocidad);
-    analogWrite(this->MI[0], 0);
-    analogWrite(this->MI[1], this->velocidad);
-    delay(tiempo);
-    this->detenerse();
-  };
-  void girarIzquierda(int tiempo = GIRO)
-  {
-    analogWrite(this->MD[0], 0);
-    analogWrite(this->MD[1], this->velocidad);
-    analogWrite(this->MI[0], this->velocidad);
-    analogWrite(this->MI[1], 0);
-    delay(tiempo);
-    this->detenerse();
-  };
-  void girarDerecha(int tiempo = GIRO)
-  {
-    analogWrite(this->MD[0], this->velocidad);
-    analogWrite(this->MD[1], 0);
-    analogWrite(this->MI[0], 0);
-    analogWrite(this->MI[1], this->velocidad);
-    delay(tiempo);
-    this->detenerse();
-  };
+      //Apagar motores
+      analogWrite(this->EN[0], 0);
+      analogWrite(this->EN[1], 0);
+	    digitalWrite(this->MD[0], 0);
+	    digitalWrite(this->MD[1], 0);
+	    digitalWrite(this->MI[0], 0);
+	    digitalWrite(this->MI[1], 0);
+    };	
+  	void setVelocidad(int num){
+      this->velocidad=num;
+    };
+    void detenerse() {
+      analogWrite(this->EN[0], 0);
+      analogWrite(this->EN[1], 0);
+      digitalWrite(this->MD[0], 0);
+	    digitalWrite(this->MD[1], 0);
+	    digitalWrite(this->MI[0], 0);
+	    digitalWrite(this->MI[1], 0);
+    };
+    void avanzar(int tiempo=1000) {
+      analogWrite(this->EN[0], this->velocidad);
+      analogWrite(this->EN[1], this->velocidad);
+      digitalWrite(this->MD[0], 1);
+	    digitalWrite(this->MD[1], 0);
+	    digitalWrite(this->MI[0], 1);
+	    digitalWrite(this->MI[1], 0);
+      delay(tiempo);
+      this->detenerse();
+    };
+		void retroceder(int tiempo=1000) {
+      analogWrite(this->EN[0], this->velocidad);
+      analogWrite(this->EN[1], this->velocidad);
+      digitalWrite(this->MD[0], 0);
+	    digitalWrite(this->MD[1], 1);
+	    digitalWrite(this->MI[0], 0);
+	    digitalWrite(this->MI[1], 1);
+      delay(tiempo);
+      this->detenerse();
+    };
+  	void girarIzquierda(int tiempo=giro) {
+      digitalWrite(this->MD[0], 0);
+	    digitalWrite(this->MD[1], 1);
+	    digitalWrite(this->MI[0], 1);
+	    digitalWrite(this->MI[1], 0);
+      delay(tiempo);
+      this->detenerse();
+    };
+    void girarDerecha() {
+      digitalWrite(this->MD[0], 1);
+	    digitalWrite(this->MD[1], 0);
+	    digitalWrite(this->MI[0], 0);
+	    digitalWrite(this->MI[1], 1);
+    };
 };
 
 class Camara {
@@ -115,6 +111,23 @@ class Camara {
         }
       }
        
+    }
+
+    void centerObject(Movimiento Robot) {
+      pixy.getResolution();
+      Robot->setVelocidad(140);
+      Serial.println("Centrando objeto...");
+      do
+      {
+        this->positionX_Object();
+        Robot->girarDerecha();
+        if(pixy.ccc.blocks[0].m_x > pixy.frameWidth - Sizes.get(0) && pixy.ccc.blocks[0].m_x < pixy.frameWidth + Sizes.get(0)) {
+          Serial.println("Objeto centrado");
+          Robot->detenerse();
+          break;
+        }
+      } while (pixy.ccc.blocks[0].m_x < pixy.frameWidth / 2);
+      Serial.println("Terminando funcion...");
     }
 
     void infoBloques() {
@@ -163,10 +176,22 @@ class Camara {
       Serial.println(promSize);
       return 2;
     }
+
+    void positionX_Object() {
+      Serial.print("\nX:\t");
+      Serial.print(pixy.ccc.blocks[0].m_x);
+      if(pixy.ccc.blocks[0].m_x > pixy.frameWidth / 2) {
+        Serial.println("Esta a la derecha");
+      } else if(pixy.ccc.blocks[0].m_x < pixy.frameWidth / 2) {
+        Serial.println("Esta a la izquierda");
+      }
+
+    }
+
     
 };
 
-Movimiento Robot(3, 5, 9, 10);
+Movimiento Robot(2, 4, 9, 7, 8, 10, 255);
 Camara Pixy;
 
 void setup() {
@@ -175,16 +200,9 @@ void setup() {
 }
 
 void loop() {
-  Serial.println();
   Pixy.getBloques();
-  Pixy.infoBloques();
-
-  Robot.avanzar(10);
-  Robot.retroceder(10);
-  Robot.girarDerecha(10);
-  Robot.girarIzquierda(10);
   
-  delay(1000);
+  Pixy.centerObject(Robot);
 
   Pixy.close();
 }
