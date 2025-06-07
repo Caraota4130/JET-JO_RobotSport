@@ -247,7 +247,7 @@ void setup() {
 
 void loop() {
   //Pixy.getBloques();
-  
+//HOLAA
   //Pd.girarPositivo();
   Robot.avanzar();
   //Pd.girarPositivo();
