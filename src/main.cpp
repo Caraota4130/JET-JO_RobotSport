@@ -5,6 +5,7 @@
 
 const int giro = 180;
 int timing=1000;
+
 class Movimiento {
 	private:
   	int MD[2], MI[2], EN[2];
@@ -81,6 +82,46 @@ class Movimiento {
     };
 };
 
+class Podadora {
+  private:
+    int pines[2];
+    int fuerza;
+  public:
+    Podadora(int PinA, int PinB, int fuerza=255) {
+      this->pines[0]=PinA;
+      this->pines[1]=PinB;
+      this->fuerza=fuerza;
+    }
+    void iniciar() {
+      pinMode(this->pines[0], OUTPUT);
+      pinMode(this->pines[1], OUTPUT);
+
+      analogWrite(this->pines[0], 0);
+      analogWrite(this->pines[1], 0);
+    }
+    void setFuerza(int num) {
+      this->fuerza = num;
+    }
+    void detener() {
+      analogWrite(this->pines[0], 0);
+      analogWrite(this->pines[1], 0);
+    }
+    void girarNegativo(int tiempo = 1000) {
+      analogWrite(this->pines[0], this->fuerza);
+      analogWrite(this->pines[1], 0);
+      delay(1000);
+      this->detener();
+    }
+    void girarPositivo(int tiempo = 1000) {
+      analogWrite(this->pines[0], 0);
+      analogWrite(this->pines[1], this->fuerza);
+      delay(1000);
+      this->detener();
+    }
+  private:
+
+};
+
 class Camara {
   
   public:
@@ -113,6 +154,8 @@ class Camara {
        
     }
 
+    /*
+
     void centerObject(Movimiento Robot) {
       pixy.getResolution();
       Robot->setVelocidad(140);
@@ -129,6 +172,7 @@ class Camara {
       } while (pixy.ccc.blocks[0].m_x < pixy.frameWidth / 2);
       Serial.println("Terminando funcion...");
     }
+    */
 
     void infoBloques() {
       for (int i = 0; i < numBloques; i++)
@@ -191,19 +235,24 @@ class Camara {
     
 };
 
-Movimiento Robot(2, 4, 9, 7, 8, 10, 255);
-Camara Pixy;
+Movimiento Robot(2, 4, 9, 7, 8, 10, 200);
+Podadora Pd(12, 13);
+//Camara Pixy;
 
 void setup() {
   Serial.begin(9600);
   Robot.iniciar();
+  Pd.iniciar();
 }
 
 void loop() {
-  Pixy.getBloques();
+  //Pixy.getBloques();
   
-  Pixy.centerObject(Robot);
+  //Pd.girarPositivo();
+  Robot.avanzar();
+  //Pd.girarPositivo();
+  //Pixy.centerObject(Robot);
 
-  Pixy.close();
+  //Pixy.close();
 }
 
