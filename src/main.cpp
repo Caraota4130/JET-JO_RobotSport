@@ -3,7 +3,7 @@
 #include <Pixy2/Pixy2.h>
 
 
-const int giro = 180;
+const int giro = 1000;
 int timing=1000;
 
 class Movimiento {
@@ -235,24 +235,27 @@ class Camara {
     
 };
 
-Movimiento Robot(2, 4, 9, 7, 8, 10, 200);
-Podadora Pd(12, 13);
-//Camara Pixy;
+//Movimiento Robot(2, 4, 9, 7, 8, 10, 200);
+//Podadora Pd(12, 13);
+Camara Pixy;
 
 void setup() {
   Serial.begin(9600);
-  Robot.iniciar();
-  Pd.iniciar();
+  //Robot.iniciar();
+  //Pd.iniciar();
 }
 
 void loop() {
-  //Pixy.getBloques();
+  //Serial.println("Iniciando...");
+
+  Pixy.getBloques();
+  Pixy.infoBloques();
   
   //Pd.girarPositivo();
-  Robot.avanzar();
+  //Robot.girarDerecha();
   //Pd.girarPositivo();
   //Pixy.centerObject(Robot);
 
-  //Pixy.close();
+  Pixy.close();
 }
 
