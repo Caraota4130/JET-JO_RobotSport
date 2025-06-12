@@ -9,16 +9,17 @@ int timing=1000;
 class Movimiento {
 	private:
   	int MD[2], MI[2], EN[2];
-    int velocidad;
+    int vel[2];
   public:
-    Movimiento(int MIa, int MIb, int ENI, int MDa, int MDb, int END, int velocidad=250) {
+    Movimiento(int MIa, int MIb, int ENI, int MDa, int MDb, int END, int v1=250, int v2=250) {
       this->MD[0]=MIa;
       this->MD[1]=MIb;
       this->EN[0]=ENI;
       this->MI[0]=MDa;
       this->MI[1]=MDb;
       this->EN[1]=END;
-      this->velocidad=velocidad;
+      this->vel[0]=v1;
+      this->vel[1]=v2;
     };
     void iniciar() {
       //Configuracion de pines
@@ -35,8 +36,9 @@ class Movimiento {
 	    digitalWrite(this->MI[0], 0);
 	    digitalWrite(this->MI[1], 0);
     };	
-  	void setVelocidad(int num){
-      this->velocidad=num;
+  	void setVelocidad(int v1, int v2){
+      this->vel[0]=v1;
+      this->vel[1]=v2;
     };
     void detenerse() {
       analogWrite(this->EN[0], 0);
@@ -47,8 +49,8 @@ class Movimiento {
 	    digitalWrite(this->MI[1], 0);
     };
     void avanzar(int tiempo=1000) {
-      analogWrite(this->EN[0], this->velocidad);
-      analogWrite(this->EN[1], this->velocidad);
+      analogWrite(this->EN[0], this->vel[0]);
+      analogWrite(this->EN[1], this->vel[1]);
       digitalWrite(this->MD[0], 1);
 	    digitalWrite(this->MD[1], 0);
 	    digitalWrite(this->MI[0], 1);
@@ -57,8 +59,9 @@ class Movimiento {
       this->detenerse();
     };
 		void retroceder(int tiempo=1000) {
-      analogWrite(this->EN[0], this->velocidad);
-      analogWrite(this->EN[1], this->velocidad);
+      analogWrite(this->EN[1], this->vel[1]);
+      analogWrite(this->EN[0], this->vel[0]);
+      
       digitalWrite(this->MD[0], 0);
 	    digitalWrite(this->MD[1], 1);
 	    digitalWrite(this->MI[0], 0);
@@ -67,6 +70,8 @@ class Movimiento {
       this->detenerse();
     };
   	void girarIzquierda(int tiempo=giro) {
+      analogWrite(this->EN[0], this->vel[0]);
+      analogWrite(this->EN[1], this->vel[1]);
       digitalWrite(this->MD[0], 0);
 	    digitalWrite(this->MD[1], 1);
 	    digitalWrite(this->MI[0], 1);
@@ -74,11 +79,15 @@ class Movimiento {
       delay(tiempo);
       this->detenerse();
     };
-    void girarDerecha() {
+    void girarDerecha(int tiempo=giro) {
+      analogWrite(this->EN[0], this->vel[0]);
+      analogWrite(this->EN[1], this->vel[1]);
       digitalWrite(this->MD[0], 1);
 	    digitalWrite(this->MD[1], 0);
 	    digitalWrite(this->MI[0], 0);
 	    digitalWrite(this->MI[1], 1);
+      delay(tiempo);
+      this->detenerse();
     };
 };
 
@@ -235,7 +244,7 @@ class Camara {
     
 };
 
-Movimiento Robot(2, 4, 9, 7, 8, 10, 200);
+Movimiento Robot(2, 4, 9, 7, 8, 10, 160, 180);
 Podadora Pd(12, 13);
 //Camara Pixy;
 
@@ -247,12 +256,12 @@ void setup() {
 
 void loop() {
   //Pixy.getBloques();
-//HOLAA
-  //Pd.girarPositivo();
-  Robot.avanzar();
-  //Pd.girarPositivo();
-  //Pixy.centerObject(Robot);
-
+  Robot.avanzar(1500);
+  Robot.retroceder(2000);
+  Robot.girarDerecha(700);
+  Robot.avanzar(2000);
+  Robot.retroceder(550);
+  Robot.girarIzquierda(750);
+  Robot.retroceder(1100);
   //Pixy.close();
 }
-
