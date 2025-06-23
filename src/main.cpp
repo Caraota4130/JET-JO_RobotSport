@@ -47,7 +47,7 @@ void loop()
     display.println("Negro");
     display.display();
   delay(500);
-  Robot.retrocederCiclo(180, 180);
+  Robot.retrocederCiclo(190, 180);
     display.clearDisplay();
     display.setCursor(0, 10);
     display.println("Sin pared");
