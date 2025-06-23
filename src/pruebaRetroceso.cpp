@@ -27,23 +27,22 @@ void setup()
   display.setCursor(0, 10);
   // Robot.iniciar();
   // Pd.iniciar();
-  Robot.avanzar(180, 185, 300);
 }
 
 void loop()
 {
-  while (digitalRead(13)!=1 && digitalRead(12)!=1)
+  while (digitalRead(11)==1)
   {
-    Robot.avanzarCiclo(180, 185);
+    Robot.retrocederCiclo(180, 175);
     display.clearDisplay();
     display.setCursor(0, 10);
-    display.println("Blanco");
+    display.println("Sin pared");
     display.display();
   }
   Robot.detenerse();
   display.clearDisplay();
   display.setCursor(0, 10);
-  display.println("Negro");
+  display.println("Pared");
   display.display();
   delay(2000);
 }
