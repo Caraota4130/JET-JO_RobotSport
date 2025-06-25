@@ -14,24 +14,10 @@
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 Movimiento Robot(2, 4, 9, 7, 8, 10);
+Podadora Pd(6, 5, 255);
 
-void setup()
-{
-  Serial.begin(9600);
-  pinMode(IR_IZQUIERDA, INPUT);
-  pinMode(IR_DERECHA, INPUT);
-  pinMode(IR_ATRAS, INPUT);
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3c);
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 10);
-  Robot.avanzar(180, 175, 300);
-}
-
-void loop()
-{
-  Robot.avanzarCiclo(180, 180);
+void hastaLinea() {
+  Robot.avanzarCiclo(220, 240);
     display.clearDisplay();
     display.setCursor(0, 10);
     display.println("Blanco");
@@ -46,8 +32,11 @@ void loop()
     display.setCursor(0, 10);
     display.println("Negro");
     display.display();
-  delay(500);
-  Robot.retrocederCiclo(190, 180);
+  delay(700);
+}
+
+void hastaPared() {
+  Robot.retrocederCiclo(180, 177);
     display.clearDisplay();
     display.setCursor(0, 10);
     display.println("Sin pared");
@@ -62,12 +51,61 @@ void loop()
     display.setCursor(0, 10);
     display.println("Pared");
     display.display();
-  delay(500);
+  delay(700);
+}
+
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(IR_IZQUIERDA, INPUT);
+  pinMode(IR_DERECHA, INPUT);
+  pinMode(IR_ATRAS, INPUT);
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3c);
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 10);
+  
+}
+
+void loop()
+{
+  //-----------------CARRIL 1---------------------------//
+  Robot.avanzar(180, 180, 300);
+  hastaLinea();
+
+  Robot.avanzar(220, 240, 70);
+  Pd.girarPositivo(1000);
+
+  hastaPared();
+  
+  //--------------------------------------------------//
+
+  //-------------CAMBIO DE CARRIL IZ-DR---------------------//
   Robot.avanzar(180, 200, 160);
   Robot.girarDerecha(180, 200, 600);
-  Robot.avanzar(180, 185, 700);
+  Robot.avanzar(180, 185, 400);
   Robot.retroceder(180, 200, 200);
+  Robot.girarIzquierda(180, 200, 500);
+  hastaPared();
+  //-------------------------------------------------//
+
+  //------------------CARRIL 2-----------------------//
+  Robot.avanzar(180, 180, 300);
+  
+  hastaLinea();
+
+  hastaPared();
+
+  //-----------------------------------------------//
+
+  //-------------CAMBIO DE CARRIL DR-IZ---------------------//
+  Robot.avanzar(180, 200, 160);
   Robot.girarIzquierda(180, 200, 600);
-  Robot.retroceder(180, 200, 600);
+  Robot.retroceder(180, 200, 200);
+  Robot.avanzar(180, 185, 400);
+  Robot.girarDerecha(180, 200, 550);
+  hastaPared();
+  //-------------------------------------------------//
   delay(3000);
 }

@@ -105,23 +105,25 @@ public:
 class Podadora
 {
 private:
-    int pines[2];
+    int M1[2];
     int fuerza;
 
 public:
-    Podadora(int PinA, int PinB, int fuerza = 255)
+    Podadora(int M1A, int M1B, int fuerza = 255)
     {
-        this->pines[0] = PinA;
-        this->pines[1] = PinB;
+        this->M1[0] = M1A;
+        this->M1[1] = M1B;
+
+        pinMode(this->M1[0], OUTPUT);
+        pinMode(this->M1[1], OUTPUT);
+
+        analogWrite(this->M1[0], 0);
+        analogWrite(this->M1[1], 0);
         this->fuerza = fuerza;
     }
     void iniciar()
     {
-        pinMode(this->pines[0], OUTPUT);
-        pinMode(this->pines[1], OUTPUT);
-
-        analogWrite(this->pines[0], 0);
-        analogWrite(this->pines[1], 0);
+        
     }
     void setFuerza(int num)
     {
@@ -129,21 +131,21 @@ public:
     }
     void detener()
     {
-        analogWrite(this->pines[0], 0);
-        analogWrite(this->pines[1], 0);
+        analogWrite(this->M1[0], 0);
+        analogWrite(this->M1[1], 0);
     }
     void girarNegativo(int tiempo = 1000)
     {
-        analogWrite(this->pines[0], this->fuerza);
-        analogWrite(this->pines[1], 0);
-        delay(1000);
+        analogWrite(this->M1[0], this->fuerza);
+        analogWrite(this->M1[1], 0);
+        delay(tiempo);
         this->detener();
     }
     void girarPositivo(int tiempo = 1000)
     {
-        analogWrite(this->pines[0], 0);
-        analogWrite(this->pines[1], this->fuerza);
-        delay(1000);
+        analogWrite(this->M1[0], 0);
+        analogWrite(this->M1[1], this->fuerza);
+        delay(tiempo);
         this->detener();
     }
 
