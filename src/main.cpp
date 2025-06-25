@@ -74,8 +74,8 @@ void loop()
   Robot.avanzar(180, 180, 300);
   hastaLinea();
 
-  Robot.avanzar(220, 240, 70);
-  Pd.girarPositivo(1000);
+  //Robot.avanzar(220, 240, 70);
+  //Pd.girarPositivo(1000);
 
   hastaPared();
   
@@ -84,7 +84,7 @@ void loop()
   //-------------CAMBIO DE CARRIL IZ-DR---------------------//
   Robot.avanzar(180, 200, 160);
   Robot.girarDerecha(180, 200, 600);
-  Robot.avanzar(180, 185, 400);
+  Robot.avanzar(180, 185, 1000);
   Robot.retroceder(180, 200, 200);
   Robot.girarIzquierda(180, 200, 500);
   hastaPared();
